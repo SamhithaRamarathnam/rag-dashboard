@@ -27,8 +27,13 @@ subject = st.selectbox["Select a subject", "Physics", "Computer Science", "Elect
 subject = st.selectbox("Select subject", subject_options, index=0)
 
 #choose input type
-input_type = st.radio("Choose input type", ["PDF File", "Text File with URLs", "URL", "Raw Text"])
-selected_input_type = st.radio("Select how you want to upload content:", list(input_types.keys()), index=None)
+input_types = {
+    "PDF File": "pdf",
+    "Text File with URLs": "text_urls",
+    "URL": "url",
+    "Raw Text": "text"
+}
+selected_input_type = st.radio("Choose input type", list(input_types.keys()), index=None)
 
 uploaded_file = None
 input_source = None
@@ -79,14 +84,6 @@ else:
         input_source = uploaded_file.name
       elif selected_input_type == "Raw Text":
         input_source = "raw_text_" + raw_text.strip()[:30]
-
-      input_types = {
-        "PDF File": "pdf",
-        "Text File with URLs": "text_urls",
-        "URL": "url",
-        "Raw Text": "text"
-      }
-
 
       input_type_value = input_types[selected_input_type]
 
