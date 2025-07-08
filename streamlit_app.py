@@ -24,35 +24,47 @@ st.title("Upload Content")
 
 #choose subject
 subject = st.selectbox("Select subject", ["Physics", "Computer Science", "Electrical Engineering"])
+subject = st.selectbox("Select subject", subject_options, index=0)
 
 #choose input type
 input_type = st.radio("Choose input type", ["PDF File", "Text File with URLs", "URL", "Raw Text"])
+selected_input_type = st.radio("Select how you want to upload content:", list(input_types.keys()), index=None)
 
 uploaded_file = None
 input_source = None
 raw_text = None
 
-if input_type in ["PDF File", "Text File with URLs"]:
-  uploaded_file = st.file_uploader("Upload your file", type=["pdf", "txt"])
-elif input_type == "URL":
-  input_source = st.text_input("Paste the webpage URL here")
-elif input_type == "Raw Text":
-  raw_text = st.text_area("Paste your content here")
+if selected_input_type == "PDF File":
+    uploaded_file = st.file_uploader("Upload your PDF file", type=["pdf"])
+elif selected_input_type == "Text File with URLs":
+    uploaded_file = st.file_uploader("Upload your .txt file", type=["txt"])
+elif selected_input_type == "URL":
+    input_source = st.text_input("Paste the webpage URL here")
+elif selected_input_type == "Raw Text":
+    raw_text = st.text_area("Paste your content here")
 
 #Job scheduling
-schedule_job = st.checkbox("Schedule this for background processing", value=True)
+schedule_job = st.checkbox("Schedule this for background processing", value=False)
 
+scheduled_datetime = None
+if schedule_job:
+  scheduled_date = st.date_input("Select run date")
+  scheduled_time = st.time_input("Select run time")
+  scheduled_datetime = datetime.combine(scheduled_date, scheduled_time)
+
+all_inputs_filled = (
+  subject != "Select a subject" and
+  selected_input_type is not None and(
+    (selected_input_type in ["PDF File", "Text File with URLs"] and uploaded_file is not None) or
+    (selected_input_type == "URL" and input_source and input_source.strip()) or
+    (selected_input_type == "Raw Text" and raw_text and raw_text.strip())
+  )
+)
 #upload button
-if st.button("Upload"):
-  if not subject:
-    st.warning("Please select a subject.")
-  elif input_type in ["PDF file", "Text File with URLs"] and uploaded_file is None:
-    st.warning("Please Upload a file.")
-  elif input_type == "URL" and not input_source.strip():
-    st.warning("Please enter a valid URL.")
-  elif input_type == "Raw Text" and not raw_text.strip():
-    st.warning("Please paste some content.")
-  else:
+if not all_inputs_filled:
+  st.button("Upload",disabled=True)
+else:
+  if st.button("Upload"):
     try:
       conn = get_connection()
       cursor = conn.cursor()
@@ -68,23 +80,17 @@ if st.button("Upload"):
       elif input_type == "Raw Text":
         input_source = "raw_text_" + raw_text.strip()[:30]
 
-      type_mapping = {
-        "PDF file": "pdf",
-        "Text File with URLs": "text_urls",
-        "URL": "URL",
-        "Raw Text": "text"
-      }
-      input_type_value = type_mapping[input_type]
+      input_type_value = input_types[selected_input_type]
 
       # insert job into training_jobs table
       cursor.execute("""
           INSERT INTO training_jobs(
               job_id, subject, uploaded_by, input_type,
-              input_source, status, created_at
-          ) VALUES (%s, %s, %s, %s, %s, %s, %s)
+              input_source, status, created_at, scheduled_for
+          ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
       """, (
         job_id, subject, uploaded_by, input_type_value,
-        input_source, status, created_at
+        input_source, status, created_at, scheduled_datetime
       ))
 
       conn.commit()
