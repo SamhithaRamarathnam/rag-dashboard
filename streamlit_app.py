@@ -46,7 +46,7 @@ schedule_job = st.checkbox("Schedule this for background processing", value=True
 if st.button("Upload"):
   if not subject:
     st.warning("Please select a subject.")
-  elif input_type in ["PDF file", "Text File with URLs"] and upload_file is None:
+  elif input_type in ["PDF file", "Text File with URLs"] and uploaded_file is None:
     st.warning("Please Upload a file.")
   elif input_type == "URL" and not input_source.strip():
     st.warning("Please enter a valid URL.")
