@@ -18,6 +18,26 @@ def get_connection():
     user = DB_USER,
     password = DB_PASS
   )
+def ensure_table_exists():
+  conn = get_connection()
+  cursor = conn.cursor()
+  cursor.execute("""
+    CREATE TABLE IF NOT EXISTS training_jobs (
+      job_id UUID PRIMARY KEY,
+      subject TEXT,
+      uploaded_by TEXT,
+      input_type TEXT,
+      input_source TEXT,
+      status TEXT,
+      created_at TIMESTAMP,
+      scheduled_for TIMESTAMP
+    );
+  """)
+  conn.commit()
+  cursor.close()
+  conn.close()
+
+ensure_table_exists()
 
 st.set_page_config(page_title="Upload Content", layout="centered")
 st.title("Upload Content")
