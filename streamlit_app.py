@@ -79,7 +79,7 @@ if st.button("Upload"):
       # insert job into training_jobs table
       cursor.execute("""
           INSERT INTO training_jobs(
-              job_id, subject, uploadeed_by, input_type,
+              job_id, subject, uploaded_by, input_type,
               input_source, status, created_at
           ) VALUES (%s, %s, %s, %s, %s, %s, %s)
       """, (
