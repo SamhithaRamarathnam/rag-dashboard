@@ -1,1 +1,6 @@
 streamlit
+psycopg2-binary
+openai
+PyMuPDF
+beautifulsoup4
+langchain
