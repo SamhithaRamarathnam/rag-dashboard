@@ -23,7 +23,7 @@ st.set_page_config(page_title="Upload Content", layout="centered")
 st.title("Upload Content")
 
 #choose subject
-subject = st.selectbox["Select a subject", "Physics", "Computer Science", "Electrical Engineering"]
+subject_options = ["Select a subject", "Physics", "Computer Science", "Electrical Engineering"]
 subject = st.selectbox("Select subject", subject_options, index=0)
 
 #choose input type
@@ -80,7 +80,7 @@ else:
       status = "pending" if schedule_job else "immediate"
 
       #for tracking
-      if selected_input_type in ["PDF file", "Text File with URLs"]:
+      if selected_input_type in ["PDF File", "Text File with URLs"]:
         input_source = uploaded_file.name
       elif selected_input_type == "Raw Text":
         input_source = "raw_text_" + raw_text.strip()[:30]
