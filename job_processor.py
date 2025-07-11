@@ -18,6 +18,7 @@ DB_NAME = os.environ["DB_NAME"]
 DB_USER = os.environ["DB_USER"]
 DB_PASS = os.environ["DB_PASS"]
 OPENAI_API_KEY = os.environ["OPENAI_API_KEY"]
+os.environ["USER_AGENT"] = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36"
 os.environ["OPENAI_API_KEY"] = OPENAI_API_KEY
 
 def get_pg8000_conn():
