@@ -109,7 +109,7 @@ def process_pdf_job(file_path, subject):
 def process_text_file_with_urls(file_path, subject):
   with open(file_path, "r") as f:
     urls = [line.strip() for line in f if line.strip()]
-  print(f"Processeing {len(urls)} URLs from file: {file_path}")
+  print(f"Processeing {len(urls)} urls from file: {file_path}")
   for url in urls:
     process_url_job(url, subject)
 
@@ -119,7 +119,7 @@ def process_raw_text_job(text, subject):
   chunks = split_documents([doc])
   embed_chunks(chunks, subject)
 
-def run_job_processor(request):
+def main(request):
   run_job_processor_internal()
 
 def run_job_processor_internal():
@@ -164,6 +164,3 @@ def run_job_processor_internal():
   conn.close()
   print("\n All jobs processed!\n")
 
-if __name__ == "__main__":
-  run_job_processor()
-      
