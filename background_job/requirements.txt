@@ -1,0 +1,8 @@
+pg8000
+psycopg2-binary
+openai
+bs4
+pymupdf
+langchain
+langchain-community
+langchain-openai
