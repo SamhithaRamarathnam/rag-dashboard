@@ -119,7 +119,7 @@ def process_raw_text_job(text, subject):
   chunks = split_documents([doc])
   embed_chunks(chunks, subject)
 
-def main(request):
+def main():
   run_job_processor_internal()
 
 def run_job_processor_internal():
@@ -164,3 +164,5 @@ def run_job_processor_internal():
   conn.close()
   print("\n All jobs processed!\n")
 
+if __name__ == "__main__":
+    main()
