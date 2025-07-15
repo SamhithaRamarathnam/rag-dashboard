@@ -119,9 +119,6 @@ def process_raw_text_job(text, subject):
   chunks = split_documents([doc])
   embed_chunks(chunks, subject)
 
-def main():
-  run_job_processor_internal()
-
 def run_job_processor_internal():
   print("\n Starting background job processor...\n")
   conn = get_psycopg2_conn()
@@ -164,5 +161,8 @@ def run_job_processor_internal():
   conn.close()
   print("\n All jobs processed!\n")
 
+def main():
+  run_job_processor_internal()
+  
 if __name__ == "__main__":
     main()
