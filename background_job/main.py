@@ -161,8 +161,5 @@ def run_job_processor_internal():
   conn.close()
   print("\n All jobs processed!\n")
 
-def main():
-  run_job_processor_internal()
-  
-if __name__ == "__main__":
-    main()
+run_job_processor_internal()
+
