@@ -126,7 +126,7 @@ def run_job_processor_internal():
   cursor.execute("""
       SELECT job_id, subject, uploaded_by, input_type, input_source
       FROM training_jobs
-      WHERE status = 'pending'
+      WHERE status IN ('pending', 'immediate')
       ORDER BY created_at
   """)
   jobs = cursor.fetchall()
