@@ -53,7 +53,7 @@ def ensure_embedding_table_exists():
   cursor.execute("""
       CREATE TABLE IF NOT EXISTS langchain_pg_embedding (
           uuid UUID PRIMARY KEY,
-          collection_name UUID NOT NULL,
+          collection_id UUID NOT NULL, -- updated
           embedding vector(1536),
           document TEXT,
           cmetadata JSONB,
@@ -81,6 +81,21 @@ def ensure_subject_column():
   cursor.close()
   conn.close()
 
+def ensure_collection_id_column():  
+    conn = get_pg8000_conn()
+    cursor = conn.cursor()
+    cursor.execute("""
+        SELECT column_name
+        FROM information_schema.columns
+        WHERE table_name = 'langchain_pg_embedding' AND column_name = 'collection_id';
+    """)
+    result = cursor.fetchone()
+    if not result:
+        cursor.execute("ALTER TABLE langchain_pg_embedding ADD COLUMN collection_id UUID;")  
+    conn.commit()
+    cursor.close()
+    conn.close()
+
 def update_subject_column_from_cmetadata():
   conn = get_pg8000_conn()
   cursor = conn.cursor()
@@ -100,6 +115,7 @@ def split_documents(docs):
 def embed_chunks(chunks, subject, collection_name="rag_chunks"):
   ensure_vector_extension()
   ensure_embedding_table_exists()
+  ensure_collection_id_column()
   ensure_subject_column()
   docs = [Document(page_content=doc.page_content, metadata={"subject":subject}) for doc in chunks]
   store = PGVector(
