@@ -111,7 +111,7 @@ def ensure_collection_id_column():
     cursor.close()
     conn.close()
 
-def ensure_uuid_column():  
+def ensure_uuid_column():
     conn = get_pg8000_conn()
     cursor = conn.cursor()
     cursor.execute("""
@@ -121,7 +121,7 @@ def ensure_uuid_column():
     """)
     result = cursor.fetchone()
     if not result:
-        cursor.execute("ALTER TABLE langchain_pg_embedding ADD COLUMN uuid UUID PRIMARY KEY;")
+        cursor.execute("ALTER TABLE langchain_pg_embedding ADD COLUMN uuid UUID;")  
     conn.commit()
     cursor.close()
     conn.close()
