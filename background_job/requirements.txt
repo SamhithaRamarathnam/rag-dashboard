@@ -6,3 +6,4 @@ pymupdf
 langchain
 langchain-community
 langchain-openai
+pgvector
