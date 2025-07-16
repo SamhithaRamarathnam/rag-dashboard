@@ -107,8 +107,7 @@ def embed_chunks(chunks, subject, collection_name="rag_chunks"):
     use_jsonb=True,
     embedding_function=OpenAIEmbeddings(),
     engine_args={"creator":get_pg8000_conn},
-    collection_name=collection_name,
-    table_name="langchain_pg_embedding"
+    collection_name=collection_name
   )
   for i in range(0, len(docs), 100):
     batch = docs[i:i+100]
