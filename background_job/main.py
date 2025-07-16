@@ -81,6 +81,21 @@ def ensure_subject_column():
   cursor.close()
   conn.close()
 
+def ensure_custom_id_column():  
+    conn = get_pg8000_conn()
+    cursor = conn.cursor()
+    cursor.execute("""
+        SELECT column_name
+        FROM information_schema.columns
+        WHERE table_name = 'langchain_pg_embedding' AND column_name = 'custom_id';
+    """)
+    result = cursor.fetchone()
+    if not result:
+        cursor.execute("ALTER TABLE langchain_pg_embedding ADD COLUMN custom_id TEXT;")
+    conn.commit()
+    cursor.close()
+    conn.close()
+
 def ensure_collection_id_column():  
     conn = get_pg8000_conn()
     cursor = conn.cursor()
@@ -117,6 +132,7 @@ def embed_chunks(chunks, subject, collection_name="rag_chunks"):
   ensure_embedding_table_exists()
   ensure_collection_id_column()
   ensure_subject_column()
+  ensure_custom_id_column()
   docs = [Document(page_content=doc.page_content, metadata={"subject":subject}) for doc in chunks]
   store = PGVector(
     connection_string=f"postgresql+pg8000://{DB_USER}:{DB_PASS}@{DB_HOST}:{DB_PORT}/{DB_NAME}",
