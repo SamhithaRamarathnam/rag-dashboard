@@ -39,6 +39,23 @@ def get_psycopg2_conn():
     password=DB_PASS
   )
 
+def ensure_embedding_table_exists():
+  conn = get_pg8000_conn()
+  cursor = conn.cursor()
+  cursor.execute("""
+      CREATE TABLE IF NOT EXISTS langchain_pg_embedding (
+          id UUID PRIMARY KEY,
+          collection_name TEXT,
+          embedding VECTOR(1536),
+          document TEXT,
+          cmetadata JSONB,
+          created_at TIMESTAMP
+      );
+  """)
+  conn.commit()
+  cursor.close()
+  conn.close()
+
 def ensure_subject_column():
   conn = get_pg8000_conn()
   cursor = conn.cursor()
@@ -71,6 +88,7 @@ def split_documents(docs):
   return splitter.split_documents(docs)
 
 def embed_chunks(chunks, subject, collection_name="rag_chunks"):
+  ensure_embedding_table_exists()
   ensure_subject_column()
   docs = [Document(page_content=doc.page_content, metadata={"subject":subject}) for doc in chunks]
   store = PGVector(
