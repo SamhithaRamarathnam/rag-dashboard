@@ -51,7 +51,7 @@ def ensure_embedding_table_exists():
   conn = get_pg8000_conn()
   cursor = conn.cursor()
   cursor.execute("""
-      CREATE TABLE IF NOT EXISTS lang_pg_embedding (
+      CREATE TABLE IF NOT EXISTS langchain_pg_embedding (
           uuid UUID PRIMARY KEY,
           collection_id UUID NOT NULL,
           embedding vector(1536),
@@ -72,11 +72,11 @@ def ensure_subject_column():
   cursor.execute("""
       SELECT column_name 
       FROM information_schema.columns
-      WHERE table_name = 'lang_pg_embedding' AND column_name = 'subject';
+      WHERE table_name = 'langchain_pg_embedding' AND column_name = 'subject';
   """)
   result = cursor.fetchone()
   if not result:
-    cursor.execute("ALTER TABLE lang_pg_embedding ADD COLUMN subject TEXT;")
+    cursor.execute("ALTER TABLE langchain_pg_embedding ADD COLUMN subject TEXT;")
   conn.commit()
   cursor.close()
   conn.close()
@@ -85,7 +85,7 @@ def update_subject_column_from_cmetadata():
   conn = get_pg8000_conn()
   cursor = conn.cursor()
   cursor.execute("""
-      UPDATE lang_pg_embedding
+      UPDATE langchain_pg_embedding
       SET subject = cmetadata->>'subject'
       WHERE cmetadata->>'subject' IS NOT NULL;
   """)
@@ -108,7 +108,7 @@ def embed_chunks(chunks, subject, collection_name="rag_chunks"):
     embedding_function=OpenAIEmbeddings(),
     engine_args={"creator":get_pg8000_conn},
     collection_name=collection_name,
-    table_name="lang_pg_embedding"
+    table_name="langchain_pg_embedding"
   )
   for i in range(0, len(docs), 100):
     batch = docs[i:i+100]
