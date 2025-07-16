@@ -52,12 +52,14 @@ def ensure_embedding_table_exists():
   cursor = conn.cursor()
   cursor.execute("""
       CREATE TABLE IF NOT EXISTS langchain_pg_embedding (
-          id UUID PRIMARY KEY,
-          collection_name TEXT,
-          embedding VECTOR(1536),
+          uuid UUID PRIMARY KEY,
+          collection_id UUID NOT NULL,
+          embedding vector(1536),
           document TEXT,
           cmetadata JSONB,
-          created_at TIMESTAMP
+          custom_id TEXT,
+          created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+          subject TEXT
       );
   """)
   conn.commit()
