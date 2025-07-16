@@ -53,7 +53,7 @@ def ensure_embedding_table_exists():
   cursor.execute("""
       CREATE TABLE IF NOT EXISTS langchain_pg_embedding (
           uuid UUID PRIMARY KEY,
-          collection_id UUID NOT NULL,
+          collection_name UUID NOT NULL,
           embedding vector(1536),
           document TEXT,
           cmetadata JSONB,
